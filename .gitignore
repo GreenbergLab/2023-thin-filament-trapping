@@ -2,23 +2,23 @@ img/*.svg
 img/*.png
 img/*.eps
 img/*.rds
-"data/isometric-force-clamp/regulated_1000uM-ATP_feedback/2022-10-28/obs-07/221028_f3_s5_m4_feedback 16.txt"
-"data/isometric-force-clamp/regulated_1000uM-ATP_feedback/2022-11-03/obs-03/221103_f1_s1_m3_r3  6.txt"
-"data/isometric-force-clamp/regulated_1000uM-ATP_feedback/2022-12-07/obs-03/221207-f2-s1-m1 13.txt"
-"data/isometric-force-clamp/regulated_1000uM-ATP_feedback/2022-10-31/obs-09/221031_f1_s3_m5_r2 11.txt"
-"data/isometric-force-clamp/unregulated_1000uM-ATP_feedback/2022-09-13/obs-01/220913_f2_s2_m1_feedback  9.txt"
-"data/isometric-force-clamp/unregulated_1000uM-ATP_feedback/2022-09-23/obs-04/220923_f2_s4_m8 14.txt"
-"data/isometric-force-clamp/unregulated_1000uM-ATP_feedback/2022-08-26/obs-01/220826-s1m9  4.txt"
-"data/isometric-force-clamp/unregulated_1000uM-ATP_feedback/2022-09-09/obs-15/220909_f2s1m11 21.txt"
-"data/isometric-force-clamp/unregulated_1000uM-ATP_feedback/2022-09-09/obs-06/220909_f1s2m4-maybe-same-as-3 11.txt"
-"data/isometric-force-clamp/unregulated_1000uM-ATP_feedback/2022-09-16/obs-03/220916_f3_s2_m1_r1_f  6.txt"
-"data/standard-trap/regulated_1uM-ATP_standard/101520  7.txt"
-"data/standard-trap/regulated_1uM-ATP_standard/102720  2.txt"
-"data/standard-trap/regulated_1uM-ATP_standard/100120 12.txt"
-"data/standard-trap/regulated_1uM-ATP_standard/120920  4.txt"
-"data/standard-trap/regulated_1uM-ATP_standard/102820 14.txt"
-"data/standard-trap/unregulated_1uM-ATP_standard/2022-08-17/obs-01/220817 2.txt"
-"data/standard-trap/unregulated_1uM-ATP_standard/2020-11-03/obs-01/110320  4.txt"
-"data/standard-trap/unregulated_1uM-ATP_standard/2022-08-15/obs-03/220815  8.txt"
-"data/standard-trap/unregulated_1uM-ATP_standard/2020-12-01/obs-02/120120  9.txt"
+data/isometric-force-clamp/regulated_1000uM-ATP_feedback/2022-10-28/obs-07/221028_f3_s5_m4_feedback\ 16.txt
+data/isometric-force-clamp/regulated_1000uM-ATP_feedback/2022-11-03/obs-03/221103_f1_s1_m3_r3\ \ 6.txt
+data/isometric-force-clamp/regulated_1000uM-ATP_feedback/2022-12-07/obs-03/221207-f2-s1-m1\ 13.txt
+data/isometric-force-clamp/regulated_1000uM-ATP_feedback/2022-10-31/obs-09/221031_f1_s3_m5_r2\ 11.txt
+data/isometric-force-clamp/unregulated_1000uM-ATP_feedback/2022-09-13/obs-01/220913_f2_s2_m1_feedback\ \ 9.txt
+data/isometric-force-clamp/unregulated_1000uM-ATP_feedback/2022-09-23/obs-04/220923_f2_s4_m8 14.txt
+data/isometric-force-clamp/unregulated_1000uM-ATP_feedback/2022-08-26/obs-01/220826-s1m9\ \ 4.txt
+data/isometric-force-clamp/unregulated_1000uM-ATP_feedback/2022-09-09/obs-15/220909_f2s1m11\ 21.txt
+data/isometric-force-clamp/unregulated_1000uM-ATP_feedback/2022-09-09/obs-06/220909_f1s2m4-maybe-same-as-3\ 11.txt
+data/isometric-force-clamp/unregulated_1000uM-ATP_feedback/2022-09-16/obs-03/220916_f3_s2_m1_r1_f\ \ 6.txt
+data/standard-trap/regulated_1uM-ATP_standard/101520\ \ 7.txt
+data/standard-trap/regulated_1uM-ATP_standard/102720\ \ 2.txt
+data/standard-trap/regulated_1uM-ATP_standard/100120\ 12.txt
+data/standard-trap/regulated_1uM-ATP_standard/120920\ \ 4.txt
+data/standard-trap/regulated_1uM-ATP_standard/102820\ 14.txt
+data/standard-trap/unregulated_1uM-ATP_standard/2022-08-17/obs-01/220817\ 2.txt
+data/standard-trap/unregulated_1uM-ATP_standard/2020-11-03/obs-01/110320\ \ 4.txt
+data/standard-trap/unregulated_1uM-ATP_standard/2022-08-15/obs-03/220815\ \ 8.txt
+data/standard-trap/unregulated_1uM-ATP_standard/2020-12-01/obs-02/120120\ \ 9.txt
 

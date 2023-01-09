@@ -1,3 +1,7 @@
+img/*.svg
+img/*.png
+img/*.eps
+img/*.rds
 "data/isometric-force-clamp/regulated_1000uM-ATP_feedback/2022-10-28/obs-07/221028_f3_s5_m4_feedback 16.txt"
 "data/isometric-force-clamp/regulated_1000uM-ATP_feedback/2022-11-03/obs-03/221103_f1_s1_m3_r3  6.txt"
 "data/isometric-force-clamp/regulated_1000uM-ATP_feedback/2022-12-07/obs-03/221207-f2-s1-m1 13.txt"
@@ -17,7 +21,4 @@
 "data/standard-trap/unregulated_1uM-ATP_standard/2020-11-03/obs-01/110320  4.txt"
 "data/standard-trap/unregulated_1uM-ATP_standard/2022-08-15/obs-03/220815  8.txt"
 "data/standard-trap/unregulated_1uM-ATP_standard/2020-12-01/obs-02/120120  9.txt"
-"img/*.svg"
-"img/*.png"
-"img/*.eps"
-"img/*.rds"
+

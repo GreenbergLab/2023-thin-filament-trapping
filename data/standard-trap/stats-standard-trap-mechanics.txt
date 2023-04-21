@@ -1,0 +1,72 @@
+Total Displacements - pCa 6.25 vs pCa 4
+	Welch Two Sample t-test
+
+data:  spasm_low_ca$Displacements and spasm_reg$Displacements
+t = 0.22501, df = 373.92, p-value = 0.8221
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -1.332668  1.677073
+sample estimates:
+mean of x mean of y 
+ 5.118563  4.946360 
+
+Total Displacements - pCa 6.25 vs Unregulated
+	Welch Two Sample t-test
+
+data:  spasm_low_ca$Displacements and spasm_unreg$Displacements
+t = -0.22111, df = 394.8, p-value = 0.8251
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -1.721364  1.373312
+sample estimates:
+mean of x mean of y 
+ 5.118563  5.292589 
+
+Substep 1 - pCa 6.25 vs pCa 4
+	Welch Two Sample t-test
+
+data:  spasm_low_ca$`Substep 1` and spasm_reg$`Substep 1`
+t = 0.23218, df = 369.82, p-value = 0.8165
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -1.314430  1.666392
+sample estimates:
+mean of x mean of y 
+ 4.232643  4.056662 
+
+Substep 1 - pCa 6.25 vs Unregulated
+	Welch Two Sample t-test
+
+data:  spasm_low_ca$`Substep 1` and spasm_unreg$`Substep 1`
+t = -0.48309, df = 393.1, p-value = 0.6293
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -1.912539  1.158035
+sample estimates:
+mean of x mean of y 
+ 4.232643  4.609894 
+
+Substep 2 - pCa 6.25 vs pCa 4
+	Welch Two Sample t-test
+
+data:  spasm_low_ca$`Substep 2` and spasm_reg$`Substep 2`
+t = -0.0088037, df = 529.59, p-value = 0.993
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.8469053  0.8393483
+sample estimates:
+mean of x mean of y 
+0.8859203 0.8896988 
+
+Substep 2 - pCa 6.25 vs Unregulated
+	Welch Two Sample t-test
+
+data:  spasm_low_ca$`Substep 2` and spasm_unreg$`Substep 2`
+t = 0.54727, df = 354.58, p-value = 0.5845
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.5270888  0.9335409
+sample estimates:
+mean of x mean of y 
+0.8859203 0.6826942 
+

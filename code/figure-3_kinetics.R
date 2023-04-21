@@ -6,19 +6,27 @@ library(dplyr)
 library(tidyr)
 library(purrr)
 library(ggtext)
-library(ggpubr)
+## library(ggpubr)
 library(here)
+library(gridExtra)
+library(grid)
+
+# define global text sizes
+textsize <- 9
+basesize <- 11
 
 set.seed(2022)
+
+# get colors
+colz <- c(unname(palette.colors())[c(1, 4)])
 #### trap on times ####
-
-colz <- unname(palette.colors())[c(1, 4)]
-
+# get files paths and read in data
 files <- list(
           Unregulated = here("data", "standard-trap", "unregulated_1uM-ATP_standard", "spasm-unregulated-standard.xlsx"),
-          Regulated = here("data", "standard-trap" ,"regulated_1uM-ATP_standard", "spasm-regulated-standard-2.xlsx")
+          Regulated = here("data", "standard-trap" ,"regulated_1uM-ATP_standard", "spasm-regulated-standard.xlsx")
 )
 
+# helper function
 read_spasm_workbook <- function(spasm_file, id){
    map_df(excel_sheets(spasm_file),
            ~read_excel(spasm_file,
@@ -38,6 +46,10 @@ spasm_data$id <- factor(spasm_data$id, levels = c("Unregulated", "Regulated"))
 
 spasm_data <- mutate(spasm_data,
                      "Attachment Times" = `duration (s)`)
+
+
+
+
 
 # define a function to use mle to estimate detachment rate and boostrap CI
 fit_ton <- function(data){
@@ -116,19 +128,18 @@ fit_ton <- function(data){
   k_low_diff <- round(mod$minimum[[1]] - ci$k_95[[1]], 2)
   k_high_diff <- round(ci$k_95[[2]] - mod$minimum[[1]], 2)
 
-  html_label <- paste0("k<sub>0</sub> = ",
-                     round(mod$minimum[1], 1),
-                     "s<sup>-1</sup> (+",
-                     k_high_diff,
-                     "/-",
-                     k_low_diff,
+  html_label <- paste0(round(mod$minimum[1], 1),
+                     " (-",
+                     round(k_low_diff, 1),
+                     "/+",
+                     round(k_high_diff, 1),
                      ")")
 
   parse_label <- paste0(round(mod$minimum[1], 1),
                         "~(-",
-                        k_low_diff,
+                        round(k_low_diff, 1),
                         "/+",
-                        k_high_diff,
+                        round(k_high_diff, 1),
                         ")")
 
   list(
@@ -152,6 +163,7 @@ ton_boot <-
   mutate(fit = map(data, fit_ton),
          predict = map(fit, `[[`, "predict_df"),
          parse_label  = map_chr(fit, `[[`, "parse_label"),
+         html_label  = map_chr(fit, `[[`, "html_label"),
          boot_df = map(fit, `[[`, "boot_df"),
          cdf_data = map(fit, `[[`, "data_df"))
 
@@ -159,9 +171,7 @@ ton_boot <-
 ## walk2(ton_boot$id, ton_boot$boot_df, ~readr::write_csv(x = .y,
 ##                                                 file = here("data",
 ##                                                             "standard-trap",
-##                                                              paste0(.x, "_attachment-time-bootstrap.csv"))))
-
-## ton_trap_pvalue <- kruskal.test(`Attachment Times` ~ id, data = spasm_data)$p.value
+##                                                              paste0(.x, "_attachment-time-bootstrap-2023-03-31.csv"))))
 
 # unravel data from the nest back to long data for ggplot
 # gets the real emperical CDF
@@ -178,30 +188,28 @@ ton_predict_df <-
   unnest(cols = c(predict))
 
 # make the plots
-(ton_cdf <-
+ton_cdf <-
 ggplot()+
   geom_step(data = ton_real_df,
             aes(x = x,
                 y = y,
                 color = id),
             alpha = 0.6,
-            size = 1)+
+            linewidth= 1)+
   geom_line(data = ton_predict_df,
             aes(x = x,
                 y = y,
                 color = id),
             linetype = "dashed")+
   scale_color_manual(values = colz)+
-  ggtitle("Attachment Times")+
+  ggtitle("Attachment Durations")+
   ylab("Cumulative Probability")+
   xlab("Time (s)")+
-  theme_cowplot()+
+  theme_cowplot(basesize)+
   theme(
     plot.title = element_text(hjust = 0.5),
-    legend.position = "none",
-    axis.title.y = element_text(size = 11)
-)
-)
+    legend.position = "none")
+
 
 
 ## ADP Release
@@ -215,8 +223,10 @@ adp_df <-
 
 adp_df$id <- factor(adp_df$id, levels = c("unreg", "reg"))
 
-colz <- unname(palette.colors()[c(1, 4)])
 
+# you will get warnings about using size vs linewidth, ggplot2 updated during this project,
+# this version of ggplot does not have a scale_linewidth_manual
+# to replace the call to scale_size_manual
 (gg_adp <- ggplot(adp_df)+
   geom_line(aes(x = Time, y = y, color = id, size = id))+
   coord_cartesian(xlim = c(0, 0.15))+
@@ -227,11 +237,11 @@ colz <- unname(palette.colors()[c(1, 4)])
   xlab("Time (s)")+
   ylab("Normalized Fluorescence")+
   ggtitle("ADP Release")+
-  theme_cowplot()+
+  theme_cowplot(basesize)+
   theme(
   plot.title = element_markdown(hjust = 0.5),
   legend.position = "none",
-  axis.title.y = element_text(size = 10))
+  axis.title.y = element_text(size = textsize))
 )
 
 ## kfast of ATP binding
@@ -325,9 +335,9 @@ scale_color_manual(name = "", labels = c("Unregulated", "Regulated"), values = c
   ggtitle("ATP Induced Dissociation")+
   xlab("[ATP] &#40;&#xb5;M&#41;")+
   ylab("k<sub>fast</sub> (s<sup>-1</sup>)")+
-  theme_cowplot()+
+  theme_cowplot(basesize)+
   theme(
-    plot.title = element_text(hjust = 0.5, size = 12),
+    plot.title = element_text(hjust = 0.5),
     legend.position = "none",
   axis.title.y = element_markdown(),
   axis.title.x = element_markdown())
@@ -349,7 +359,7 @@ scale_color_manual(name = "", labels = c("Unregulated", "Regulated"), values = c
 gg_kfast_zoom$layers[[4]] <- NULL
 
 # draw the inset on the parent plot
-(gg_kfast2 <- ggdraw(gg_kfast)+draw_plot(gg_kfast_zoom, 0.5, 0.2, 0.4, 0.5))
+(gg_kfast2 <- ggdraw(gg_kfast)+draw_plot(gg_kfast_zoom, 0.5, 0.15, 0.45, 0.55))
 
 # adp release stats
 adp_reg_mean <- 76
@@ -390,54 +400,233 @@ t.test2 <- function(m1,m2,s1,s2,n1,n2,m0=0,equal.variance=FALSE)
 adp_p <- t.test2(m1 = adp_unreg_mean, s1 = adp_unreg_sd, n1 = adp_unreg_n,
                  m2 = adp_reg_mean, s2 = adp_reg_sd, n2 = adp_reg_n)
 
-adp_unreg_label <- paste0(adp_unreg_mean, "%+-%", round(adp_unreg_sd, 2))
-adp_reg_label <- paste0(adp_reg_mean, "%+-%", adp_reg_sd)
+adp_unreg_label <- paste0(round(adp_unreg_mean, 0), " &plusmn; ", round(adp_unreg_sd, 0))
+adp_reg_label <- paste0(adp_reg_mean, " &plusmn; ", adp_reg_sd)
 
 # calcualte second order binding rate and propogate error
 # k_{+2} / (1/K_1)
 unreg_2nd_order <- 1220/305.8
+unreg_second_order_format <- format(round(unreg_2nd_order, 1), nsmall = 1)
 #                       sqrt( (((1/B)^2)*sd(A)^2) + (((A/B^2)^2)*sd(B)^2) )
 unreg_2nd_order_sd <- sqrt( (((1/305.8)^2)*(56^2)) + ( ((1220/(305.8^2))^2)*(59^2)) )
-unreg_2nd_order_label <- paste0(round(unreg_2nd_order, 2), "%+-%", round(unreg_2nd_order_sd, 1))
+unreg_2nd_order_label <- paste0(unreg_second_order_format, " &plusmn; " , round(unreg_2nd_order_sd, 1))
 
 reg_2nd_order <- 1084/496.3
 #                       sqrt( (((1/B)^2)*sd(A)^2) + (((A/B^2)^2)*sd(B)^2) )
 reg_2nd_order_sd <- sqrt( (((1/496.3)^2)*(49^2)) + ( ((1084/(496.3^2))^2)*(82^2)) )
-reg_2nd_order_label <- paste0(round(reg_2nd_order, 2), "%+-%", round(reg_2nd_order_sd, 1))
+reg_2nd_order_label <- paste0(round(reg_2nd_order, 1), " &plusmn; ", round(reg_2nd_order_sd, 1))
 
 k_plus_ATP_p <- t.test2(m1 = unreg_2nd_order, s1 = unreg_2nd_order_sd, n1 = 3,
                         m2 = reg_2nd_order, s2 = reg_2nd_order_sd, n2 = 3)
 
 # combine all data into a nice looking table
-(pretty_table <-
+# this is going to define new text grobs in order to write HTML using the {gridtext} package
+# in the table because it was a headache trying to get plotmath to parse
+text_grob2 <- function(label,
+                      col = "black",
+                      fontsize = 12,
+                      cex = 1,
+                      fontfamily = "",
+                      fontface = 1L,
+                      lineheight = 1.2,
+                      alpha = 1,
+                      rot = 0,
+                      ## check.overlap = FALSE,
+                      name = NULL,
+                      vp = NULL,
+                      hjust = 0.5,
+                      vjust = 0.5,
+                      x = 0.5,
+                      y = 0.5,
+                      default.units = "npc"){
+
+  gridtext::richtext_grob(
+              text = label, #
+              x = x, #
+              y = y,  #
+           hjust = hjust, #
+           vjust = vjust, #
+           rot = rot,
+           default.units = default.units,
+           name = name,
+           vp = vp,
+           gp = gpar(col = col, #
+                     cex = cex,  #
+                     fontfamily = fontfamily, #
+                     fontface = fontface, #
+                     fontsize = fontsize,  #
+                     lineheight = lineheight,#
+                     alpha = alpha #
+                     ))
+
+}
+
+# define a new rect grob for making the table that will work with the new text grob
+rect_grob <- function(fill = "white",
+                      col = "black",
+                      lty = "solid",
+                      lwd = 1, cex = 1,
+                      alpha = 1,
+                      lineend = "round",
+                      linejoin = "round",
+                      linemitre = 10,
+                      lex = 1,
+                      name = NULL,
+                      vp = NULL,
+                      just = "centre",
+                      hjust = 0.5,
+                      vjust = 0.5,
+                      width = unit(1,"npc") - unit(2, "scaledpts"),
+                      height = unit(1,"npc") - unit(2, "scaledpts"),
+                      x = 0.5,
+                      y = 0.5,
+                      default.units = "npc"){
+
+  rectGrob(x = x,
+           y = y,
+           just = just, hjust = hjust, vjust = vjust,
+           width = width,
+           height = height,
+           default.units = default.units,
+           name = name, vp = vp,
+           gp = gpar(col = col,
+                     fill = fill,
+                     alpha = alpha,
+                     lty = lty,
+                     lwd = lwd,
+                     lex = lex,
+                     lineend = lineend,
+                     linejoin = linejoin,
+                     linemitre = linemitre,
+                     cex = cex))
+}
+
+
+text_grob <- function(label,
+                      parse = FALSE,
+                      col = "black",
+                      fontsize = 12,
+                      cex = 1,
+                      fontfamily = "",
+                      fontface = 1L,
+                      lineheight = 1.2,
+                      alpha = 1,
+                      rot = 0,
+                      check.overlap = FALSE,
+                      name = NULL,
+                      vp = NULL,
+                      just = "centre",
+                      hjust = 0.5,
+                      vjust = 0.5,
+                      x = 0.5,
+                      y = 0.5,
+                      default.units = "npc"){
+  if(parse){
+    label <- tryCatch(parse(text=label),
+                      error = function(e) label)
+  }
+
+  textGrob(label = label, x = x, y = y,
+           just = just, hjust = hjust, vjust = vjust,
+           rot = rot, check.overlap = check.overlap,
+           default.units = default.units,
+           name = name, vp = vp,
+           gp = gpar(col = col,
+                     cex = cex,
+                     fontfamily = fontfamily,
+                     fontface = fontface,
+                     fontsize = fontsize,
+                     lineheight = lineheight,
+                     alpha = alpha))
+
+}
+#
+theme_default2 <- function(base_size=12,
+                           base_colour="black",
+                           base_family="",
+                           parse=FALSE,
+                           padding = unit(c(4, 4), "mm"), ...){
+
+  core <- list(fg_fun = text_grob2,
+               fg_params = list(col=base_colour,
+                                fontsize = base_size,
+                                fontfamily = base_family),
+               bg_fun = rect_grob,
+               bg_params = list(fill = c("grey95","grey90"),
+                                lwd=1.5, col="white"),
+               padding = padding)
+
+  colhead <- list(fg_fun = text_grob,
+                  fg_params = list(parse=parse, col=base_colour,
+                                   fontface=2L,
+                                   fontsize = base_size,
+                                   fontfamily = base_family),
+                  bg_fun = rect_grob,
+                  bg_params = list(fill = c("grey80"),
+                                   lwd=1.5, col="white"),
+                  padding = padding)
+
+  rowhead <- list(fg_fun = text_grob,
+                  fg_params = list(parse=parse, col=base_colour,
+                                   fontface=3L,
+                                   fontsize = base_size,
+                                   fontfamily = base_family,
+                                   hjust = 1, x = 0.95),
+                  bg_fun = rect_grob,
+                  bg_params = list(fill=NA, lwd=1.5, col="white"),
+                  padding = padding)
+
+  default <- list(
+    core = core,
+    colhead = colhead,
+    rowhead= rowhead
+  )
+
+  modifyList(default, list(...))
+
+}
+
+
+pretty_table <-
   tribble(
    ~"Term",           ~"Unregulated",     ~"Regulated",               ~"P-Value",
-   "t[on]~(s^-1)",     ton_boot$parse_label[[1]], ton_boot$parse_label[[2]], "0.002",
-   "k[-ADP]~(s^-1)",   adp_unreg_label,             adp_reg_label,       as.character(round(adp_p[["p-value"]], 2)),
-   "1/K[1]~(μM^-1)",           "305.8%+-%59", "496.3%+-%82",     "0.008",
-   "k[+2]~(s^-1)",     "1220%+-%56", "1084%+-%49",         "0.01",
-   "k[K[1]%.%k[+2]]~(μM^-1*s^-1)", unreg_2nd_order_label,  reg_2nd_order_label,   as.character(round(k_plus_ATP_p[["p-value"]], 2))
-   )|>
-   ggtexttable(rows = c("a", "b", "c", "c", "c"),
-               theme = ttheme(base_size = 14,
-                              tbody.style = tbody_style(size = 14,
-                                                        parse = TRUE,
-                                                        fill = "white",
-                                                        linecolor = "black"),
-                              colnames.style = colnames_style(size = 14,
-                                                              face = "bold",
-                                                              fill = "Black",
-                                                              color = "white"))) |>
-  table_cell_bg(row = 2:6, column = 4, fill = alpha(colz[2], 0.3), color = "black") |>
-    table_cell_bg(row = 2:6, column = 3, fill = alpha(colz[1], 0.3), color = "black")
+   "k<sub>det</sub> (s<sup>-1</sup>)",     ton_boot$html_label[[1]], ton_boot$html_label[[2]], "0.002",
+   "k<sub>ADP</sub> (s<sup>-1</sup>)",   adp_unreg_label,             adp_reg_label,       as.character(round(adp_p[["p-value"]], 2)),
+   "1/K<sub>1</sub> (μM<sup>-1</sup>)",           "306 &plusmn; 59", "496 &plusmn; 82",     "0.008",
+   "k<sub>+2</sub> (s<sup>-1</sup>)",     "1220 &plusmn; 56", "1084 &plusmn; 49",         "0.01",
+    "K<sub>1</sub>' &middot; k<sub>+2</sub>' (μM<sup>-1</sup> &middot; s<sup>-1</sup>)", unreg_2nd_order_label,  reg_2nd_order_label,   as.character(round(k_plus_ATP_p[["p-value"]], 2))
    )
 
+tab <- tableGrob(pretty_table,
+                 rows = c("a", "b", rep("c", 3)),
+                          theme = theme_default2(base_size = basesize,      # Use hjust and x to left justify the text
+         # Alternate the row fill colours
+                 core = list(
+                             bg_params=list(fill=c(rep("white", 5),
+                                                   rep(alpha("black", 0.4), 5),
+                                                   rep(alpha(colz[2], 0.5), 5),
+                                                   rep("white", 5)),
+                                            col = "black")),
+         # Change column header to white text and red background
+                 colhead = list(fg_params=list(col="white"),
+                                bg_params=list(fill="black")))
+                 )
 
 
 # plot everything together
-fig3_top <- plot_grid(ton_cdf, gg_adp, gg_kfast2, ncol = 3, labels = letters)
+fig3_top <- plot_grid(NULL, ton_cdf, NULL, nrow = 1, rel_widths = c(0.5, 1, 0.5))
 
-plot_grid(fig3_top, pretty_table, ncol = 1, labels = c("", "d"), rel_heights = c(0.5, 0.5))
+fig3_middle <- plot_grid(gg_adp, gg_kfast2, ncol = 2, labels = c("b", "c"))
 
 
+# write files to file
+png(filename = "img/figure-3_kinetics-review.png", width = 6.5, height = 7.2, units = "in", res = 500)
+plot_grid(fig3_top, fig3_middle, tab, nrow = 3, labels = c("a", "", "d"))
+dev.off()
+
+
+# write file
+svg(filename = "img/figure-3_kinetics-review.svg", width = 6.5, height = 7.2)
+plot_grid(fig3_top, fig3_middle, tab, nrow = 3, labels = c("a", "", "d"))
+dev.off()
 ## ggsave(here("img", "fig-3_kinetics.png"), dpi=500, bg = "white")

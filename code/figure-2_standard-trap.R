@@ -7,6 +7,7 @@ library(cowplot)
 library(ggtext)
 library(ggpubr)
 
+# define global text sizes for plots and tables
 textsize <- 9
 basesize <- 11
 # get file locations for the SPASM output files
@@ -49,7 +50,7 @@ n_unreg <- spasm_sum$n[spasm_sum$id == "Unregulated"]
 n_reg <- spasm_sum$n[spasm_sum$id == "Regulated"]
 
 #### Raw traces ###
-colz <- unname(palette.colors())[c(1, 4)]
+colz <- c(unname(palette.colors())[c(1, 4)])
 
 # helper function to read in data from the greenberg trap
 read_greenberg <- function(file){
@@ -101,7 +102,7 @@ raw_unreg[, y := Trap2X * -1 * raw_unreg_trace$options$nm_v2]
 
 
 # make the plot and add scale bars with geom_segment
-(gg_raw_unreg <-
+gg_raw_unreg <-
   ggplot(raw_unreg)+
   geom_line(aes(dp, y), linewidth = 0.15)+
    draw_line(x = c(-2000, 18000),
@@ -111,18 +112,6 @@ raw_unreg[, y := Trap2X * -1 * raw_unreg_trace$options$nm_v2]
              y = c(mean(raw_unreg$y)+20,
                    mean(raw_unreg$y)-20),
              linewidth = 0.7)+
-  ## annotate("segment",
-  ##          y = -160,
-  ##          yend = -160,
-  ##          x = -2000,
-  ##          xend = 18000,
-  ##          linewidth = 0.9)+
-  ## annotate("segment",
-  ##          y = -160,
-  ##          yend = -120,
-  ##          x = -2000,
-  ##          xend = -2000,
-  ##          linewidth = 0.9)+
    geom_segment(data = unreg_spasm,
                 aes(x = starter, xend = stopper,
                     y = -90, yend = -90),
@@ -139,7 +128,6 @@ raw_unreg[, y := Trap2X * -1 * raw_unreg_trace$options$nm_v2]
   theme(
   plot.title = element_text(hjust = 0.50, face = "bold", size = basesize)
   )
-)
 
 # do the same as above, but for regulated
 # probably would be better to define a function vs copy/paste...
@@ -170,7 +158,7 @@ reg_spasm <- read_xlsx(here("data",
 
 raw_reg[, y := Trap2X * raw_reg_trace$options$nm_v2]
 
-(gg_raw_reg <-
+gg_raw_reg <-
   ggplot(raw_reg)+
   geom_line(aes(x = dp,
                 y = (Trap2X * raw_reg_trace$options$nm_v2)),
@@ -211,10 +199,10 @@ raw_reg[, y := Trap2X * raw_reg_trace$options$nm_v2]
   theme(
     plot.title = element_text(hjust = 0.50, face = "bold", size = basesize, color = colz[2])
   )
-)
+
 
 # combine plots
-(gg_raw_plots <- plot_grid(gg_raw_unreg, gg_raw_reg, nrow = 1, labels = c("a", "b")))
+gg_raw_plots <- plot_grid(gg_raw_unreg, gg_raw_reg, nrow = 1, labels = c("a", "b"))
 
 
 #### Ensemble Averages ####
@@ -411,6 +399,7 @@ spasm_plot_ensemble_average <- function(spasm_file, color, x_shift, title){
 }
 
 
+# fit each conditions ensemble average
 g1 <-
   spasm_plot_ensemble_average(here("data", "standard-trap", "ensemble-averages", "unregulated-combinedEnsembleAxesData.xlsx"),
                                  color = alpha(colz[1], 0.5),
@@ -424,8 +413,8 @@ g2 <-
                             title = "Regulated")
 
 
-(gg_ea <- plot_grid(g1$gg, g2$gg, nrow = 1, labels = c("c", "d")))
-
+# combine enemble average plots
+gg_ea <- plot_grid(g1$gg, g2$gg, nrow = 1, labels = c("c", "d"))
 
 #### Step ####
 
@@ -455,7 +444,8 @@ spasm_reg <- filter(spasm_data, id == "Regulated")
 
 total_step_pvalue <- t.test(spasm_unreg$Displacements, spasm_reg$Displacements)$p.value
 
-(total_step_ecdf <- spasm_plot_ecdf(spasm_data, var = "Displacements", colz, x_lab = "nanometers")+
+
+total_step_ecdf <- spasm_plot_ecdf(spasm_data, var = "Displacements", colz, x_lab = "nanometers")+
   ggtitle("Total Displacements")+
   ylab("Cumulative Probability")+
   xlab("Displacement (nm)")+
@@ -497,7 +487,7 @@ total_step_pvalue <- t.test(spasm_unreg$Displacements, spasm_reg$Displacements)$
    coord_cartesian(xlim = c(-32, NA))+
    theme(axis.title.x = element_text(color = "white"),
          axis.title.y = element_text(size = textsize+1))
-  )
+
 
 
 # shapiro wilk tests
@@ -517,7 +507,8 @@ lapply(reg_to_test_norm, shapiro.test)
 
 one_step_pvalue <- t.test(spasm_unreg$`Substep 1`, spasm_reg$`Substep 1`)$p.value
 
-(one_step_ecdf <- spasm_plot_ecdf(spasm_data, var = "Substep 1", colz, x_lab = "nanometers")+
+one_step_ecdf <-
+  spasm_plot_ecdf(spasm_data, var = "Substep 1", colz, x_lab = "nanometers")+
   ylab("Cumulative Probability")+
   xlab("Displacement (nm)")+
    annotate("text",
@@ -534,13 +525,6 @@ one_step_pvalue <- t.test(spasm_unreg$`Substep 1`, spasm_reg$`Substep 1`)$p.valu
                         round(mean(spasm_unreg$`Substep 1`), 1),
                         "%+-%", round(sd(spasm_unreg$`Substep 1`), 1),
                         "~nm"),
-                        ## "<br>",
-                        ## "<span style = 'color: #009E73;'>",
-                        ## "x&#772; = ", round(mean(spasm_reg$`Substep 1`), 1),
-                        ## " &plusmn; ", round(sd(spasm_reg$`Substep 1`), 1),
-                        ## " nm"),
-          ## fill = NA,
-          ## label.color = NA,
           parse = TRUE,
           hjust = 0,
           vjust = 1,
@@ -562,12 +546,12 @@ one_step_pvalue <- t.test(spasm_unreg$`Substep 1`, spasm_reg$`Substep 1`)$p.valu
     axis.ticks.y = element_blank(),
     axis.text.y = element_blank(),
     axis.title.y = element_blank())
-  )
 
 
 two_step_pvalue <- t.test(spasm_unreg$`Substep 2`, spasm_reg$`Substep 2`)$p.value
 
-(two_step_ecdf <- spasm_plot_ecdf(spasm_data, var = "Substep 2", colz, x_lab = "nanometers")+
+two_step_ecdf <-
+  spasm_plot_ecdf(spasm_data, var = "Substep 2", colz, x_lab = "nanometers")+
   ## ggtitle("Total Displacements")+
   ylab("Cumulative Probability")+
   xlab("Displacement (nm)")+
@@ -585,14 +569,7 @@ two_step_pvalue <- t.test(spasm_unreg$`Substep 2`, spasm_reg$`Substep 2`)$p.valu
                         round(mean(spasm_unreg$`Substep 2`), 1),
                         "%+-%", round(sd(spasm_unreg$`Substep 2`), 1),
                         "~nm"),
-                        ## "<br>",
-                        ## "<span style = 'color: #009E73;'>",
-                        ## "x&#772; = ", round(mean(spasm_reg$`Substep 2`), 1),
-                        ## " &plusmn; ", round(sd(spasm_reg$`Substep 2`), 1),
-                        ## " nm"),
           parse = TRUE,
-          ## fill = NA,
-          ## label.color = NA,
           hjust = 0,
           vjust = 1,
           size = textsize/.pt)+
@@ -603,15 +580,8 @@ two_step_pvalue <- t.test(spasm_unreg$`Substep 2`, spasm_reg$`Substep 2`)$p.valu
                         round(mean(spasm_reg$`Substep 2`), 1),
                         "%+-%", round(sd(spasm_reg$`Substep 2`), 1),
                         "~nm"),
-                        ## "<br>",
-                        ## "<span style = 'color: #009E73;'>",
-                        ## "x&#772; = ", round(mean(spasm_reg$`Substep 2`), 1),
-                        ## " &plusmn; ", round(sd(spasm_reg$`Substep 2`), 1),
-                        ## " nm"),
           color = "#009E73",
           parse = TRUE,
-          ## fill = NA,
-          ## label.color = NA,
           hjust = 0,
           vjust = 1,
           size = textsize/.pt)+
@@ -622,20 +592,21 @@ two_step_pvalue <- t.test(spasm_unreg$`Substep 2`, spasm_reg$`Substep 2`)$p.valu
     axis.text.y = element_blank(),
     axis.title.y = element_blank(),
     axis.title.x = element_text(color = "white"))
-  )
+
 
 # combine step plots, figure 2 bottom row
-(gg_steps <- plot_grid(total_step_ecdf,
+gg_steps <- plot_grid(total_step_ecdf,
                        one_step_ecdf,
                        two_step_ecdf,
                        nrow = 1,
                        rel_widths = c(1, 0.9, 0.9),
-                       labels = c("e", "f", "g")))
+                       labels = c("e", "f", "g"))
 
 
+#combine all plots
+## plot_grid(gg_raw_plots, gg_ea, gg_steps, rel_heights = c(0.25, 0.5, 0.4), nrow = 3)
 
-plot_grid(gg_raw_plots, gg_ea, gg_steps, rel_heights = c(0.25, 0.5, 0.4), nrow = 3)
-
+# save the plot in specified file
 # combine all the plots into one to make figure 2
 png(filename = "img/figure-2_standard-trap.png", width = 6.5, height = 6.5, units = "in", res = 300)
 plot_grid(gg_raw_plots, gg_ea, gg_steps, rel_heights = c(0.25, 0.5, 0.4), nrow = 3)
@@ -646,3 +617,22 @@ dev.off()
 cairo_ps(filename = "img/figure-2_standard-trap.eps", width = 6.5, height = 6.5)
 plot_grid(gg_raw_plots, gg_ea, gg_steps, rel_heights = c(0.25, 0.5, 0.4), nrow = 3)
 dev.off()
+
+
+# make a figure version for conference poster
+
+
+## gg_steps2 <- plot_grid(total_step_ecdf,
+##                        one_step_ecdf,
+##                        two_step_ecdf,
+##                        nrow = 1,
+##                        rel_widths = c(1, 0.9, 0.9),
+##                        labels = c("c", "d", "e"))
+## #for poster
+## png(file = "code/poster/img/step-size.png", width = 6.5, height = 4, units = "in", res = 500)
+## plot_grid(gg_raw_plots,gg_steps2, rel_heights = c(0.25, 0.4), nrow = 2)
+## dev.off()
+
+## png(file = "code/poster/img/ea.png", width = 6.5, height = 3, units = "in", res = 500)
+## plot_grid(g1$gg, g2$gg, nrow = 1, labels = c("b", "c"))
+## dev.off()

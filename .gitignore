@@ -1,3 +1,5 @@
+*.ome.tif
+my-fiji.tar.gz
 img/*.svg
 img/*.png
 img/*.eps

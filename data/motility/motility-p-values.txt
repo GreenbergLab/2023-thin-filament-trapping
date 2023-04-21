@@ -1,0 +1,32 @@
+This file was generated from the R script located in the project directory at ./code/figure-1_motility.R.
+The contents of the file contain the p-values for the comparisons of motility velocities within a pCa.
+There are two groups, actin vs biotin-actin.
+The results follow: 
+
+pCa 4
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  Mean v [nm/sec] by actin
+W = 9156, p-value = 0.5343
+alternative hypothesis: true location shift is not equal to 0
+
+
+ pCa 6.25 
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  Mean v [nm/sec] by actin
+W = 8392.5, p-value = 0.8992
+alternative hypothesis: true location shift is not equal to 0
+
+
+ pCa 9 
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  Mean v [nm/sec] by actin
+W = 1929.5, p-value = 0.933
+alternative hypothesis: true location shift is not equal to 0
+

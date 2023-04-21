@@ -149,8 +149,8 @@ t.test2 <- function(m1,m2,s1,s2,n1,n2,m0=0,equal.variance=FALSE)
 }
 
 # ttest from summary stats
-adp_unreg_label <- paste0(adp_unreg_mean, "%+-%", round(adp_unreg_sd, 2))
-adp_reg_label <- paste0(adp_reg_mean, "%+-%", adp_reg_sd)
+## adp_unreg_label <- paste0(adp_unreg_mean, "%+-%", round(adp_unreg_sd, 2))
+## adp_reg_label <- paste0(adp_reg_mean, "%+-%", adp_reg_sd)
 
 # calcualte second order binding rate and propogate error
 # k_{+2} / (1/K_1)
@@ -191,8 +191,8 @@ k_minus_alpha_p <- t.test2(m1 = unreg_k_minus_alpha, s1 = unreg_k_minus_alpha_sd
                                                         fill = "white",
                                                         linecolor = "black"),
                               colnames.style = colnames_style(fill = "Black", color = "white"))) |>
-  table_cell_bg(row = 2:4, column = 3, fill = alpha(colz[2], 0.3), color = "black") |>
-    table_cell_bg(row = 2:4, column = 2, fill = alpha(colz[1], 0.3), color = "black")
+  table_cell_bg(row = 2:4, column = 3, fill = alpha(colz[2], 0.5), color = "black") |>
+    table_cell_bg(row = 2:4, column = 2, fill = alpha(colz[1], 0.4), color = "black")
    )
 
 
@@ -208,7 +208,7 @@ k_minus_alpha_p <- t.test2(m1 = unreg_k_minus_alpha, s1 = unreg_k_minus_alpha_sd
                 show.legend = FALSE)+
    scale_color_manual(values = colz)+
    ggtitle("K<sub>&#945;</sub>")+
-   ylab("k<sub>fast</sub>:k<sub>slow</sub>")+
+   ylab("A<sub>fast</sub>:A<sub>slow</sub>")+
    xlab("[ATP] &#40;&#xb5;M&#41;")+
    theme_cowplot(basesize)+
    theme(
@@ -231,7 +231,7 @@ scheme <- image_ggplot(image_read(here("code", "supplement", "scheme.pdf")))
 
 fig_supp_1_top <- plot_grid(gg_kslow, gg_ratioA, labels = c("b", "c"))
 
-png(filename = "img/supplement-figure-1.png", width = 6.75, height = 6, res = 300, units = "in")
+png(filename = "img/supplement-figure-1.png", width = 6.75, height = 6, res = 500, units = "in")
 plot_grid(scheme,
           fig_supp_1_top,
           pretty_table_supp,

@@ -9,7 +9,7 @@
       pkgs = nixpkgs.legacyPackages.${system};
 
     tex = (pkgs.texlive.combine {
-      inherit (pkgs.texlive) scheme-basic mhchem;
+      inherit (pkgs.texlive) scheme-full;
       });
 
     in {
@@ -31,7 +31,8 @@
                                    rPackages.cowplot
                                    rPackages.magick
                                    rPackages.rsvg
-                                   rPackages.pdftools];
+                                   rPackages.pdftools
+                                   ffmpeg_5-full     ];
       };
     });
 }
